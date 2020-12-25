@@ -12,12 +12,12 @@ const mongoose =require('mongoose');
 module.exports = passport =>{
     passport.use(
         new JwtStrategy(opts, async function(jwt_payload, done) {
-        const user = await Student.findById(jwt_payload._id);
+        const user = await Student.find({id:jwt_payload.id});
         if(user){
             return done(null,user);
         }else{
             return done(null,false);
         }
         })
-    );
+    )
 };

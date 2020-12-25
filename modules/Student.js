@@ -25,7 +25,7 @@ const stuSchema = new Schema({
     },
     avatar: {
         type: String,
-        default: '/static/img/avatar/default.png'
+        default: '/img/avatar/default.png'
     },
 
 });
