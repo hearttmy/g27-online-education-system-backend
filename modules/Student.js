@@ -17,9 +17,13 @@ const stuSchema = new Schema({
         type: String,
         require: true
     },
-    realname: {
+    realName: {
         type:String,
         require: true
+    },
+    gender:{
+        type:String,
+        default:"",
     },
     password: {
         type: String,
@@ -31,13 +35,16 @@ const stuSchema = new Schema({
     },
     email:{
         type: String,
+        default:'',
         require: true
+
     },
     study:[{
         courseID : String,
     }],
     phone:{
         type:String,
+        default:'',
     },
     avatar: {
         type: String,

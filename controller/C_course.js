@@ -11,13 +11,45 @@ const mime = require('mime-types');
 const formidable=require('formidable');
 
 module.exports = {
-
+    async Search(ctx){
+        let title = ctx.request.query.title;
+        //console.log(ctx.request.query);
+        let result = await Course.find({
+            courseName:{$regex:title,$options:"$i"},
+        })
+        ctx.body = result;
+    },
+    /*
+    设置课程状态 1:正在进行 0:已结课
+     */
+    async SetState (ctx){
+        //console.log(couID)
+        const couID = ctx.request.body.id;
+        const couState = ctx.request.body.state;
+        console.log(couState);
+        await Course.updateOne({
+            _id:couID}, {
+                state: couState,
+            }
+        ).then(()=>{
+            return ctx.body = {
+                state : true,
+            }
+        }).catch(err => {
+            console.log(err);
+        });
+    },
+    /*
+    添加课程
+    需要token验证，传入课程名字，会自动生成相应的id编号。
+    参数：Yead/Season/courseType
+     */
     async addcourse (ctx) {
-        console.log(ctx.request.body);
+        //console.log(ctx.request.body);
         //const findResult = await Course.find({id: ctx.request.body.courseID});
         const teacherID = ctx.state.user[0].id;
         const courseID = uid.uid(16);
-        console.log(ctx.state.user[0].teacherID);
+        //console.log(courseID);
         //if(findResult.length>0){
         //    ctx.body = {state:false};
         //}else{
@@ -37,9 +69,9 @@ module.exports = {
         });
     },
 
-
     /*
     新增章节
+    需要token验证
     输入{courseID,ChapterName}
     输出{state}
      */
@@ -77,18 +109,61 @@ module.exports = {
             })
     },
     /*
+      新增章节
+      需要token验证
+      输入{courseID,ChapterName}
+      输出{state}
+   */
+    async delChapter(ctx) {
+        const {
+            courseID,
+            chapterID,
+        } = ctx.request.body ;
+        console.log(ctx.request.body);
+        const tchid = ctx.state.user[0].id;
+        const cou = await Course.find({courseID:courseID});
+        if(cou[0].teacherID != tchid){
+            return ctx.body = {state:false};
+        }
+        console.log(chapterID);
+        console.log(cou[0]);
+        await Course.updateOne({
+            courseID:courseID
+        },{
+            $pull:{
+                content:{
+                    _id:chapterID
+                }
+            }
+        })
+            .then(()=>{
+                return ctx.body = {
+                    state : true,
+                }
+            })
+            .catch(err => {
+                return ctx.body ={
+                    state : false,
+                    errMsg: err.message
+                }
+            })
+    },
+
+    /*
     添加课件
+    需要token验证
     输入{CourseID/ChapterID/FileName}
     输出{state}
      */
     async AddFile(ctx){
-        console.log(ctx.request.body);
+        //console.log(ctx.request.body);
         const {
             courseID,
             chapterID,
             fileName,
         }=ctx.request.body;
         //验证是否为该门课的教师
+        //console.log(ctx.state.user);
         const tchid = ctx.state.user[0].id;
         const cou = await Course.find({courseID:courseID});
         if(cou[0].teacherID != tchid){
@@ -125,19 +200,67 @@ module.exports = {
     },
 
     /*
-    获得课程信息
+    添加课件
+    需要token验证
+    输入{CourseID/ChapterID/FileName}
+    输出{state}
+     */
+    async DelFile(ctx){
+        console.log(ctx.request.body);
+        const {
+            courseID,
+            chapterID,
+            fileName,
+        }=ctx.request.body;
+        //验证是否为该门课的教师
+        console.log(ctx.state.user);
+        const tchid = ctx.state.user[0].id;
+        const cou = await Course.find({courseID:courseID});
+        console.log(cou);
+        if(cou[0].teacherID != tchid){
+            return ctx.body = {state:false};
+        }
+        //const course = await Course.find({"courseID":courseID,"content._id":chapterID,"Filename":fileName});    //拿到文件对象
+        const File = await cou[0].content.find({"content._id":chapterID}).find({"Filename":fileName});
+        const url = File.Fileurl;
+        console.log(File);
+        //const extName = path.extname(File.name);//拓展名
+        //const name = `cou_${chapterID + fileName}`;//文件名
+        console.log(path.join('../static/',File.Fileurl));
+        fs.unlink(path.join('../static/',File.Fileurl),err => {
+            if(err) return ctx.body = {state:false,msg:err}
+        })
+        //fs.renameSync(File.path, path.join(__dirname, `../static/file/${name}`));
+        await Course.updateOne({
+            "courseID":courseID,
+            "content._id":chapterID,
+        },{
+            $pull:{
+                [`content.$.part`]:{
+                    Filename: fileName,
+                }
+            }
+        })
+            .then(()=>{
+                ctx.body = {
+                    state : true,
+                }
+            })
+            .catch(err => {
+                ctx.body ={
+                    state : false,
+                    errMsg: err.message
+                }
+            })
+    },
+
+
+    /*
+    通过课程ID获得课程信息
     通过Get的query字段获得courseID
     在数据库中通过teacherid字段查找并返回课程的所有信息
      */
     async CoursebyID(ctx){
-        //console.log(ctx.request.query);
-        // const couID = ctx.request.query.courseID;
-        // const findResult = await Course.find({courseID:couID});
-        // const Couteacher = await Teacher.find({id:findResult[0].teacherID});
-        // ctx.body= {
-        //     cou : findResult[0],
-        //     teacher : Couteacher
-        // };
         const couID = ctx.request.query.courseID;
         const docs = await Course.aggregate([{
             $match: {
@@ -171,10 +294,15 @@ module.exports = {
     在数据库中通过teacherid字段查找并返回课程的所有信息
     */
     async CoursebyType(ctx){
-        const coutype = ctx.request.query.coursetype;
+        const couType = ctx.request.query.type;
+        if(couType==="全部课程"){
+            let findResult = await Course.find({}).sort({courseName:1});
+            //console.log(findResult);
+            return ctx.body = findResult;
+        }
         const docs = await Course.aggregate([{
                 $match: {
-                    coursetype:coutype,
+                    courseType:couType,
                 }
             }, {
                 $lookup: {
@@ -199,16 +327,9 @@ module.exports = {
         ctx.body=docs;
     },
     /*
-    更改头像模块
-    token中获取user id
-    将上传的图片重命名后转移到新路径
-    如果存在同名不同后缀的图片，需要进行删除
-    返回{state/avatar}
+    传入courseID即可
      */
     async ChangeImg(ctx) {
-        //拿到user的id
-        //console.log(ctx.request.files);
-        //const userid = ctx.state.user[0].id;
         const courseID = ctx.request.body.courseID;
         const img = ctx.request.files.file;//拿到file.avatar这个对象
         const extName = path.extname(img.name);//拓展名
@@ -236,5 +357,4 @@ module.exports = {
             img: `/img/course/${name}`,
         }
     }
-
 }

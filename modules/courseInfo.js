@@ -5,6 +5,9 @@ const courseInfoSchema = new mongoose.Schema({
         type:String,
         require:true,
     },
+    courseID:{
+        type:String,
+    },
     courseName: {
         type: String,
         require: true,
@@ -25,8 +28,9 @@ const courseInfoSchema = new mongoose.Schema({
         type: String,
         require: true
     },
-    status: {
+    state: {
         type: String,
+        default: 1,
     },
     content: [  // 课程内容，一个元素为一个章节
         {

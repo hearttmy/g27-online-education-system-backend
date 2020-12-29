@@ -6,11 +6,17 @@ const C_cou = require('../../controller/C_course');
 
 
 router.get('/AllInfo',async ctx =>{
-    let findResult = await CourseInfo.find({});
+    //let findResult = await CourseInfo.find({});
+    const findResult = await  CourseInfo.aggregate( [
+        { $sample:
+                { size: 8 }
+        }] )
     //console.log(findResult);
     ctx.body = findResult;
 })
+router.get('/search',C_cou.Search);
 
+router.post('/setState',C_cou.SetState);
 
 router.post('/addcourse', passport.authenticate('jwt', { session: false }), C_cou.addcourse);
 
@@ -26,6 +32,7 @@ router.get('/CoursebyType',C_cou.CoursebyType);
 输出{state}
  */
 router.post('/addchapter',passport.authenticate('jwt', { session: false }),C_cou.addChapter);
+router.post('/delchapter', passport.authenticate('jwt', { session: false }), C_cou.delChapter);
 //,passport.authenticate('jwt', { session: false })
 
 /*
@@ -33,6 +40,7 @@ router.post('/addchapter',passport.authenticate('jwt', { session: false }),C_cou
 输入{courseID/chapterID/fileName}
 输出{state}
  */
-router.post('/addFile',C_cou.AddFile);
+router.post('/addFile',passport.authenticate('jwt', { session: false }),C_cou.AddFile);
+router.post('/delFile',passport.authenticate('jwt', { session: false }),C_cou.DelFile);
 
 module.exports = router.routes();

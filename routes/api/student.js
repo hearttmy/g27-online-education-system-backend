@@ -34,6 +34,9 @@ router.post('/login',C_stu.Login);
  */
 router.post('/changeAvatar',passport.authenticate('jwt', { session: false }), C_stu.ChangeAvatar);
 
+router.post('/changeInfo',passport.authenticate('jwt', { session: false }), C_stu.ChangeInfo);
+router.post('/changePwd',passport.authenticate('jwt', { session: false }), C_stu.ChangePwd);
+
 router.get('/current',passport.authenticate('jwt', { session: false }),async ctx =>{
     ctx.body = {
         id : ctx.state.user.id,

@@ -25,6 +25,7 @@ module.exports = {
      */
     async Register(ctx) {
         //id查重
+        console.log(ctx.request.body);
         const findResult = await Student.find({id: ctx.request.body.id});
         //返回state :false
         if(findResult.length>0){
@@ -34,10 +35,13 @@ module.exports = {
                 username: ctx.request.body.username,
                 id: ctx.request.body.id,
                 password: tool.enbcrypt(ctx.request.body.password),
+                email:ctx.request.body.email,
+                realName:ctx.request.body.realName,
             })
 
             await newStudent.save().then(user =>{
                 ctx.body = {state:true};
+                console.log(newStudent);
             }).catch(err => {
                 console.log(err);
             });
@@ -57,7 +61,6 @@ module.exports = {
     }
     否则返回 state:false
      */
-
     async Login(ctx){
         //查找记录
         let findResult = await Student.find({id: ctx.request.body.id});
@@ -82,6 +85,54 @@ module.exports = {
                 ctx.body = {state:false};
             }
         }
+    },
+
+    async ChangePwd(ctx){
+        let findResult = await Student.find({id: ctx.state.user[0].id});
+        const newPwd = ctx.request.body.newPwd;
+        const oldPwd = ctx.request.body.oldPwd;
+        const user = findResult[0];
+        //password: tool.enbcrypt(ctx.request.body.password)
+        if(findResult.length === 0){
+            return ctx.body = {state:false};
+        }else{
+            let result = await bcrypt.compareSync(oldPwd, user.password);
+            if(result){
+                await Student.updateOne({
+                    id:user.id
+                }, {
+                    password: tool.enbcrypt(newPwd)
+                })
+                ctx.body = {state:true};
+            }else{
+                ctx.body = {state:false,msg:"wrong pwd"};
+            }
+        }
+
+    },
+
+
+    async ChangeInfo(ctx){
+        const userid = ctx.state.user[0].id;
+        const realName= ctx.request.body.realName;
+        const username= ctx.request.body.username;
+        const gender = ctx.request.body.gender;
+        const phone = ctx.request.body.phone;
+        let state;
+        let stu = await Student.updateOne({
+            id:userid,
+        },{
+            realName:realName,
+            username:username,
+            gender:gender,
+            phone:phone,
+        }).then(()=>{
+            state = true
+        }).catch(err => {
+            state = false
+        })
+        let newUser = await Student.find({id: ctx.state.user[0].id});
+        ctx.body={state,user:newUser[0]};
     },
 
     /*
