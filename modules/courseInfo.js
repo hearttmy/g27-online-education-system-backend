@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
 const courseInfoSchema = new mongoose.Schema({
-    courseID: {
-        type: String,
-        require: true,
-        unique: true,
+    courseType: {
+        type:String,
+        require:true,
     },
-    coursename: {
+    courseName: {
         type: String,
         require: true,
     },
@@ -14,28 +13,35 @@ const courseInfoSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    teacherName:{
+        type: String,
+        require: true,
+    },
+    faculty: {
+        type: String,
+        require: true
+    },
     DurationTime: {
         type: String,
         require: true
     },
-    status: [
-        {
-            id: String
-        }
-    ],
+    status: {
+        type: String,
+    },
     content: [  // 课程内容，一个元素为一个章节
         {
-            id: Number,  // 编号
-            stamp: String,  // 章节名称
+            //id: Number,  // 编号
+            ChapterName: String,  // 章节名称
             part: [
                 {
-                    id: Number,  // 编号
-                    title: String,  // 单元名称
-                    content: String  // 内容
+                    //id: Number,  // 编号
+                    Filename: String,  // 文件内容
+                    Fileurl: String  // 内容
                 }
             ]
         }
     ],
+
     bulletins: [
         {
             content: String,
@@ -51,7 +57,7 @@ const courseInfoSchema = new mongoose.Schema({
     },
     img: {
         type: String,
-        default: '/static/img/avatar/default.png'
+        default: '/img/course/default.png'
     },
 });
 
