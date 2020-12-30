@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 const router = new Router();
 const Student = require('../../modules/Student');
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const tool = require('../../config/tool');
 const keys = require('../../config/keys');
 const jwt = require('jsonwebtoken');
@@ -33,7 +33,6 @@ router.post('/login',C_stu.Login);
  Output:{ state / data:{avatar} }
  */
 router.post('/changeAvatar',passport.authenticate('jwt', { session: false }), C_stu.ChangeAvatar);
-
 router.post('/changeInfo',passport.authenticate('jwt', { session: false }), C_stu.ChangeInfo);
 router.post('/changePwd',passport.authenticate('jwt', { session: false }), C_stu.ChangePwd);
 

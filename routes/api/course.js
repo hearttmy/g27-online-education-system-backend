@@ -4,6 +4,7 @@ const CourseInfo = require('../../modules/courseInfo');
 const passport = require('koa-passport');
 const C_cou = require('../../controller/C_course');
 
+//router.get('/test',C_cou.Test);
 
 router.get('/AllInfo',async ctx =>{
     //let findResult = await CourseInfo.find({});
@@ -14,6 +15,11 @@ router.get('/AllInfo',async ctx =>{
     //console.log(findResult);
     ctx.body = findResult;
 })
+
+router.get('/isSelect',passport.authenticate('jwt', { session: false }),C_cou.isSelect);
+
+router.get('/addStudent',passport.authenticate('jwt', { session: false }),C_cou.addStudent);
+
 router.get('/search',C_cou.Search);
 
 router.post('/setState',C_cou.SetState);
@@ -27,13 +33,17 @@ router.get('/CoursebyID',C_cou.CoursebyID);
 router.get('/CoursebyType',C_cou.CoursebyType);
 
 /*
+
+ */
+router.post('/select',passport.authenticate('jwt', { session: false }),C_cou.addStudent);
+
+/*
 新增章节
 输入{courseID,ChapterName}
 输出{state}
  */
-router.post('/addchapter',passport.authenticate('jwt', { session: false }),C_cou.addChapter);
+router.post('/addchapter', passport.authenticate('jwt', { session: false }), C_cou.addChapter);
 router.post('/delchapter', passport.authenticate('jwt', { session: false }), C_cou.delChapter);
-//,passport.authenticate('jwt', { session: false })
 
 /*
 添加课件

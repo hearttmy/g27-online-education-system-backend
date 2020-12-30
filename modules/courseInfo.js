@@ -32,6 +32,9 @@ const courseInfoSchema = new mongoose.Schema({
         type: String,
         default: 1,
     },
+    students:[{
+        type:String,
+    }],
     content: [  // 课程内容，一个元素为一个章节
         {
             //id: Number,  // 编号
@@ -64,12 +67,5 @@ const courseInfoSchema = new mongoose.Schema({
         default: '/img/course/default.png'
     },
 });
-
-// courseInfoSchema.index({
-//     coursename: 'text',
-//     'content.stamp': 'text',
-//     'content.part.title': 'text',
-//     'content.part.content': 'text',
-// })
 
 module.exports = mongoose.model('CourseInfo', courseInfoSchema);

@@ -29,6 +29,6 @@
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
     "silly-datetime": "^0.1.2",
-    "uid": "^2.0.0"
+    "uid": "npm^2.0.0"
   }
 }

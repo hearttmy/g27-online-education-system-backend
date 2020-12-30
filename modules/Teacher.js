@@ -18,7 +18,7 @@ const tchSchema = new Schema({
         type: String,
         require: true
     },
-    realname: {
+    realName: {
         type:String,
         require: true
     },

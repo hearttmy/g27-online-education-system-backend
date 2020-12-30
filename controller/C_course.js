@@ -1,5 +1,6 @@
 const Course = require('../modules/courseInfo');
 const Teacher = require('../modules/Teacher');
+const Student = require('../modules/Student');
 const tool = require('../config/tool');
 const keys = require('../config/keys');
 const jwt = require('jsonwebtoken');
@@ -11,6 +12,69 @@ const mime = require('mime-types');
 const formidable=require('formidable');
 
 module.exports = {
+
+    async isSelect(ctx){
+        const stuID = ctx.state.user[0].id;
+        const courseID = ctx.request.query.courseID;
+        const course = await Student.findOne({
+            id : stuID,
+            //"study.courseID" : courseID
+        },{
+            study:{$elemMatch:{
+                courseID : courseID
+            }}
+        })
+        //console.log(course.study.length());
+        if(course.study===undefined){
+            return ctx.body={state:false}
+        }else{
+            return ctx.body={state:true}
+        }
+
+    },
+
+    async addStudent(ctx){
+        const stuID = ctx.state.user[0].id;
+        const courseID = ctx.request.query.courseID;
+        console.log(ctx.state.user[0]);
+        const course = await Student.findOne({
+            id : stuID,
+        },{
+            study:{$elemMatch:{
+                    courseID : courseID
+                }}
+        })
+        if(course.study.length===0){
+            await Student.updateOne({
+                id:stuID,
+                //"study.courseID" : courseID
+            },{
+                $push:{
+                    study:{courseID}
+                }
+            }).then(()=>{
+                ctx.body = {state:true}
+            }).catch(err =>{
+                ctx.body = {state:false,msg:err}
+            })
+            await Course.updateOne({
+                courseID:courseID
+            },{
+                $push:{
+                    students:stuID
+                }
+            })
+        }else{
+            return ctx.body={state:false}
+        }
+        //let re = await Student.find({id:stuID});
+        //console.log(re);
+
+
+
+    },
+
+
     async Search(ctx){
         let title = ctx.request.query.title;
         //console.log(ctx.request.query);
@@ -19,6 +83,7 @@ module.exports = {
         })
         ctx.body = result;
     },
+
     /*
     设置课程状态 1:正在进行 0:已结课
      */
@@ -211,6 +276,7 @@ module.exports = {
             courseID,
             chapterID,
             fileName,
+            fileUrl,
         }=ctx.request.body;
         //验证是否为该门课的教师
         console.log(ctx.state.user);
@@ -221,13 +287,13 @@ module.exports = {
             return ctx.body = {state:false};
         }
         //const course = await Course.find({"courseID":courseID,"content._id":chapterID,"Filename":fileName});    //拿到文件对象
-        const File = await cou[0].content.find({"content._id":chapterID}).find({"Filename":fileName});
-        const url = File.Fileurl;
-        console.log(File);
+        const url = fileUrl;
+        //const url = File.Fileurl;
+        //console.log(File);
         //const extName = path.extname(File.name);//拓展名
         //const name = `cou_${chapterID + fileName}`;//文件名
-        console.log(path.join('../static/',File.Fileurl));
-        fs.unlink(path.join('../static/',File.Fileurl),err => {
+        console.log(path.join('../static/',url));
+        fs.unlink(path.join('../static/',url),err => {
             if(err) return ctx.body = {state:false,msg:err}
         })
         //fs.renameSync(File.path, path.join(__dirname, `../static/file/${name}`));
@@ -358,3 +424,19 @@ module.exports = {
         }
     }
 }
+
+// async Test(ctx) {
+//     let couID = "5feae1ef9b102c25207fba46" ;
+//     let ChaID = "5feae8c4f87a21268d90876c" ;
+//     let result = await Course.find({
+//         _id:couID,
+//         "content._id":ChaID
+//     },{
+//         content:{$elemMatch:{
+//             //"part._id": "5feaea7a97246b27487ae4b3"
+//             }}
+//     })
+//     console.log(result);
+//     ctx.body= result;
+//
+// },

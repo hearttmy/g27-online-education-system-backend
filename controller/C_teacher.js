@@ -66,7 +66,7 @@ module.exports = {
                 _id : user._id,
                 avatar : user.avatar,
                 username : user.username,
-                type : 1,
+                type : "1",
             };
             const token = jwt.sign(payload,keys.secretTokenKey,{expiresIn: 3600*24*7});
             if(result){

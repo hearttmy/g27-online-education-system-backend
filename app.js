@@ -19,8 +19,6 @@ const path = require('path');
 app.use(cors());
 //静态文件
 app.use(static(path.join(__dirname , './static')));
-//body
-//app.use(bodyParser());
 
 app.use(koabody({
     multipart: true, // 允许解析'multipart/form-data'类型的文件
