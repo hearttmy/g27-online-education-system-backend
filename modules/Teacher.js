@@ -32,6 +32,7 @@ const tchSchema = new Schema({
     },
     email:{
         type: String,
+        default:'',
         require: true
     },
     teach:[{
@@ -39,6 +40,11 @@ const tchSchema = new Schema({
     }],
     phone:{
         type:String,
+        default:'',
+    },
+    gender:{
+        type:String,
+        default:"",
     },
     avatar: {
         type: String,

@@ -14,6 +14,7 @@ const formidable=require('formidable');
 module.exports = {
 
     async isSelect(ctx){
+        console.log()
         const stuID = ctx.state.user[0].id;
         const courseID = ctx.request.query.courseID;
         const course = await Student.findOne({
@@ -24,13 +25,13 @@ module.exports = {
                 courseID : courseID
             }}
         })
-        //console.log(course.study.length());
-        if(course.study===undefined){
-            return ctx.body={state:false}
-        }else{
-            return ctx.body={state:true}
-        }
-
+        console.log(course.study);
+        console.log(course.study.length);
+         if(course.study.length===0){
+             return ctx.body={state:false}
+         }else{
+             return ctx.body={state:true}
+         }
     },
 
     async addStudent(ctx){
@@ -220,6 +221,7 @@ module.exports = {
     输入{CourseID/ChapterID/FileName}
     输出{state}
      */
+
     async AddFile(ctx){
         //console.log(ctx.request.body);
         const {
@@ -265,7 +267,7 @@ module.exports = {
     },
 
     /*
-    添加课件
+    删除课件
     需要token验证
     输入{CourseID/ChapterID/FileName}
     输出{state}
@@ -337,8 +339,13 @@ module.exports = {
                 from: "teachers",
                 localField: "teacherID",
                 foreignField: "id",
-                as: "teacher"
-            }
+                as: "teacher",},
+                $lookup: {
+                    from :"students",
+                    localField :"students",
+                    foreignField:"id",
+                    as:"studentInfo"
+                }
         },{
             $project: {
                 _id:0,
@@ -348,10 +355,18 @@ module.exports = {
                     __v:0,
                     password:0,
                     created:0,
+                },
+                studentInfo:{
+                    _id:0,
+                    __v:0,
+                    password:0,
+                    created:0,
                 }
             }
             }]
-        )
+        ).catch(err=>{
+            ctx.body={state:false,msg:err}
+        })
         ctx.body=docs[0];
     },
     /*

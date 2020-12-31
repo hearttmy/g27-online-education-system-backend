@@ -13,9 +13,9 @@ module.exports = passport =>{
     passport.use(
         new JwtStrategy(opts, async function(jwt_payload, done) {
             let user;
-            if(jwt_payload.type === '0'){
+            if(jwt_payload.type === "0"){
                  user = await Student.find({id:jwt_payload.id});
-            }else if(jwt_payload.type === "1"){
+            }else if(jwt_payload.type == "1"){
                  user = await Teacher.find({id:jwt_payload.id});
             }
         if(user){
