@@ -75,7 +75,6 @@ module.exports = {
 
     },
 
-
     async Search(ctx){
         let title = ctx.request.query.title;
         //console.log(ctx.request.query);
@@ -175,7 +174,7 @@ module.exports = {
             })
     },
     /*
-      新增章节
+      删除章节
       需要token验证
       输入{courseID,ChapterName}
       输出{state}

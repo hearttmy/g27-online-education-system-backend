@@ -48,7 +48,6 @@ const courseInfoSchema = new mongoose.Schema({
             ]
         }
     ],
-
     bulletins: [
         {
             content: String,
