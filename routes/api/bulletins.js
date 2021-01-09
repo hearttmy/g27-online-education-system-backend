@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const router = new Router();
+const passport = require('koa-passport');
 
 const C_bulletins = require('../../controller/C_bulletins');
 /*
@@ -23,4 +24,5 @@ output: {state}
 */
 router.post('/delBulletins',C_bulletins.delBulletins);
 
+router.post('/userIndex',passport.authenticate('jwt', { session: false }),C_bulletins.MyBulletins);
 module.exports = router.routes();
