@@ -286,7 +286,7 @@ module.exports = {
       fileName,
       fileUrl
     }=ctx.request.body;
-
+    console.log(ctx.request.body);
     fs.unlink(path.join('../static/',fileUrl),err => {
       if(err) return ctx.body = {state:false,msg:err}
     })
