@@ -10,12 +10,14 @@ router.get('/getHW',C_hw.getHW);
 router.post('/addHW',C_hw.newHW);
 
 router.post('/fileToHW',C_hw.fileToHW);
+router.post('/delHWFile',C_hw.delHWFile);
 
 router.post('/submitHW',passport.authenticate('jwt', { session: false }),C_hw.submitHW);
 
 router.get('/getSubmit',C_hw.getSubmit);
 
 router.post('/delSubmitHW',C_hw.delSubmitHW);
+
 
 router.post('/DelHW',C_hw.DelNewHW);
 
