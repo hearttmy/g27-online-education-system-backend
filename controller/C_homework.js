@@ -17,23 +17,27 @@ async function getHWGrade(ctx) {
   } = ctx;
 
   let HWGrade = 0;
-  const group = await Group.findOne({courseID:courseID,stuID:stuID});
-  const groupID = group._id;
 
   const HW = await Homework.find({
     courseID: courseID
   })
+  const group = await Group.findOne({courseID:courseID,stuID:stuID});
+  let groupID=0;
+  console.log(group);
+  if(group !== null){
+    groupID=group._id;
+  }
 
   await Promise.all(HW.map(async (item) => {
-    if(item.type==="小组作业"){
-      let re = await HWSubmission.find({hwID: item._id, stuID: groupID})
-      if (re.length === 0) ;
-      else {
-        if (re[0].grade >= 0) HWGrade += re[0].grade * item.proportion / 100;
-      }
+      if(groupID!==0){
+        let re = await HWSubmission.find({hwID: item._id, stuID: groupID})
+        if (re.length === 0) return 0;
+        else {
+          if (re[0].grade >= 0) HWGrade += re[0].grade * item.proportion / 100;
+        }
     }else{
       let re = await HWSubmission.find({hwID: item._id, stuID: stuID})
-      if (re.length === 0) ;
+      if (re.length === 0) return 0;
       else {
         if (re[0].grade >= 0) HWGrade += re[0].grade * item.proportion / 100;
       }
@@ -69,7 +73,6 @@ module.exports = {
       courseID
     } = ctx.request.body;
     const stu = ctx.state.user[0];
-
     let stuGrade= await Grade.aggregate([
       {
         $match:{
@@ -94,7 +97,6 @@ module.exports = {
         }
       }
     ])
-
     return ctx.body={state:true,Grade:stuGrade}
   },
 
@@ -137,7 +139,7 @@ module.exports = {
       //stuID,
       //courseID
     } = ctx.request.body;
-
+    console.log(ctx.request.body);
     await Grade.updateOne({
       _id:gradeID,
     },{
@@ -158,6 +160,7 @@ module.exports = {
     const{
       courseID,
     }=ctx.request.query;
+
     const result = await Homework.find({
       courseID:courseID,
     }).catch(err=>{
@@ -499,7 +502,9 @@ module.exports = {
     if(HW.type==="小组作业"){
       const courseID = HW.courseID;
       const group = await Group.findOne({courseID:courseID,stuID:stuID});
-      stuID=group._id;
+      if(group!==null){
+        stuID=group._id;
+      }
     }
     const docs = await HWSubmission.find({
       stuID:stuID,
@@ -549,14 +554,19 @@ module.exports = {
   async IsSubmit(ctx){
     const stuID = ctx.state.user[0].id;
     const courseID = ctx.request.query.courseID;
-    const group = await Group.findOne({courseID:courseID,stuID:stuID});
+    //const group = await Group.findOne({courseID:courseID,stuID:stuID});
 
     let HW = await Homework.find({courseID:courseID});
+    const group = await Group.findOne({courseID:courseID,stuID:stuID});
+    let groupID=0;
+    if(group !== null){
+      groupID=group._id;
+    }
 
     let r = await Promise.all( HW.map(async (item)=>{
       let isSelect=0,grade=0;
       if(item.type === "小组作业"){
-        let re = await HWSubmission.find({hwID:item._id,stuID:group._id})
+        let re = await HWSubmission.find({hwID:item._id,stuID:groupID})
         if(re.length===0) isSelect=0;
         else{
           isSelect=1;

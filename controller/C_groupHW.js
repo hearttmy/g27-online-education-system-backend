@@ -32,7 +32,7 @@ module.exports = {
       groupName,
       groupMember,
     } = ctx.request.body;
-
+    console.log(ctx.request.body);
     const newGroup = new Group({
       groupName:groupName,
       courseID:courseID,
@@ -60,7 +60,7 @@ module.exports = {
       groupID
     } = ctx.request.body;
 
-    await Group.remove({
+    await Group.deleteOne({
       _id:groupID
     }).then(()=>{
       ctx.body = {state:true}

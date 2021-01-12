@@ -18,7 +18,6 @@ router.get('/getSubmit',C_hw.getSubmit);
 
 router.post('/delSubmitHW',C_hw.delSubmitHW);
 
-
 router.post('/DelHW',C_hw.DelNewHW);
 
 router.get('/MySubmit',passport.authenticate('jwt', { session: false }),C_hw.MySubmit);
