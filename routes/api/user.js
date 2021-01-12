@@ -22,3 +22,4 @@ router.post('/changePwd',passport.authenticate('jwt', { session: false }), C_use
 router.post('/findPwd',C_user.verify);
 router.post('/resetPwd',C_user.send);
 module.exports = router.routes();
+

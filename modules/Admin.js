@@ -48,5 +48,4 @@ const adminSchema = new Schema({
     default: Date.now
   }
 });
-
 module.exports = admin = mongoose.model('admin', adminSchema);

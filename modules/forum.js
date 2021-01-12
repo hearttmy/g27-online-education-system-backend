@@ -31,5 +31,4 @@ const forum = new Schema({
     default:0,
   }
 });
-
 module.exports = Forum = mongoose.model('forum', forum);

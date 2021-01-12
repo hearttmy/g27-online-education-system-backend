@@ -36,3 +36,4 @@ router.post('/stuNoGroup',C_hwGroup.stuNoGroup);
 router.post('/test',C_hw.test);
 
 module.exports = router.routes();
+

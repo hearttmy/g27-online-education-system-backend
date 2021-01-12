@@ -43,3 +43,4 @@ router.post('/register',C_stu.Register);
 // });
 
 module.exports = router.routes();
+

@@ -17,5 +17,4 @@ router.use('/api/course',Course);
 router.use('/api/course',Bulletins);
 router.use('/api/course',forum);
 
-
 module.exports = router.routes();

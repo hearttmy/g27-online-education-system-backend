@@ -66,5 +66,4 @@ const courseInfoSchema = new mongoose.Schema({
         default: '/img/course/default.png'
     },
 });
-
 module.exports = mongoose.model('CourseInfo', courseInfoSchema);

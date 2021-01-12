@@ -116,7 +116,6 @@ module.exports = {
 
     return ctx.body={state:true,result:List};
 
-
   }
 
 }

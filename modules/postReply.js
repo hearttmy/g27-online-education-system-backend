@@ -23,5 +23,4 @@ const postReplySchema = new Schema({
     default: Date.now
   },
 });
-
 module.exports = PostReply = mongoose.model('postReply', postReplySchema);

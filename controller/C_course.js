@@ -711,6 +711,4 @@ module.exports = {
       avatar: `/img/course/${fullName}`,
     }
   }
-
-
 }

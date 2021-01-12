@@ -24,3 +24,4 @@ router.post('/register1',C_stu.Register);
 // router.post('/changeAvatar',passport.authenticate('jwt', { session: false }), C_stu.ChangeAvatar);
 
 module.exports = router.routes();
+

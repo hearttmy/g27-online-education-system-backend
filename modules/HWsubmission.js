@@ -34,5 +34,4 @@ const HWSubmissionSchema = new mongoose.Schema({
 
 })
 
-
 module.exports = HWSubmission = mongoose.model('HWSubmission', HWSubmissionSchema);

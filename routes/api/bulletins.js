@@ -26,3 +26,4 @@ router.post('/delBulletins',C_bulletins.delBulletins);
 
 router.post('/userIndex',passport.authenticate('jwt', { session: false }),C_bulletins.MyBulletins);
 module.exports = router.routes();
+

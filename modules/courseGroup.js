@@ -13,5 +13,4 @@ const couGroupSchema = new mongoose.Schema({
     require:true,
   }]
 });
-
 module.exports = couGroup = mongoose.model('couGroup', couGroupSchema);

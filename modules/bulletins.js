@@ -19,5 +19,4 @@ const bulletins = new Schema({
     default: Date.now
   }
 });
-
 module.exports = Bulletins = mongoose.model('bulletins', bulletins);

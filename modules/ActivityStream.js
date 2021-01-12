@@ -22,5 +22,4 @@ const ASSchema = new mongoose.Schema({
     require:true,
   }
 })
-
 module.exports = asSchema = mongoose.model('ActivityStream', ASSchema);
