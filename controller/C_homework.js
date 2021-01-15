@@ -325,11 +325,12 @@ module.exports = {
     let stuID = ctx.state.user[0].id;
     const hwID = ctx.request.body.hwID;
     const HW = await Homework.findById(hwID);
-
+    let StuNum = 1;
     if(HW.type==="小组作业"){
       const courseID = HW.courseID;
       const group = await Group.findOne({courseID:courseID,stuID:stuID});
       stuID=group._id;
+      StuNum = group.stuID.length;
     }
 
     if (!fs.existsSync(path.join(__dirname, `../static/homework/${hwID}`))) {
@@ -355,7 +356,7 @@ module.exports = {
 
       //更新作业提交情况
       const HW = await Homework.findById(hwID);
-      let Num = HW.NumOfSub + 1;
+      let Num = HW.NumOfSub + StuNum;
 
       await Homework.updateOne({
         _id: hwID,
